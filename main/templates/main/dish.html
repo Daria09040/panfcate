@@ -1,0 +1,83 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+{{ dish.name_dish }} | Panfcate
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if messages %}
+    <div class="alert alert-dismissible alert-danger text-center" role="alert">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+    </div>
+    {% endif %}
+
+    <div class="row mb-5">
+        <div class="col-md-6 col-12 mb-3 d-flex justify-content-center">
+            <div class="image-container">
+                <img src="{{ dish.photo_dish.url }}" 
+                     alt="Фото {{ dish.name_dish }}" 
+                     class="img-fluid" />
+            </div>
+        </div>
+
+        <div class="col-md-6 col-12 text-start">
+            <h2 class="mb-4">{{ dish.name_dish }}
+                <span class="text-muted" style="font-size: 1.5rem;">{{ dish.total_weight }} кг</span>
+            </h2>
+            <p>{{ dish.descr_dish | linebreaksbr }}</p>
+            <div class="row mt-3">
+                <div class="col-12 text-start">
+                    <p style="font-size: 1.5rem; font-weight: bold;">{{ dish.price_dish }} ₽</p>
+                </div>
+            </div>
+            <form action='add_to_cart' method="post">
+                {% csrf_token %}
+                <div class="d-flex align-items-center">
+                    <input type="hidden" name="dish_id" value="{{ dish.id }}" />
+                    <input type="hidden" name="next" value="{% if request.path %}{{ request.path }}?id={{ dish.id }}{% else %}{{ request.path }}{% endif %}">
+                    <input type="hidden" name="cnt" id="hiddenCnt" value="1"/>
+                    <div class="mt-auto d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary btn-lg" id="decrementBtn"><i class="bi bi-dash-lg"></i></button>
+                        <p class="mx-3 my-0 my-auto" id="cnt" style="font-size: 1.8rem;">1</p>
+                        <button type="button" class="btn btn-secondary btn-lg" id="incrementBtn"><i class="bi bi-plus-lg"></i></button>
+                        <button type="submit" class="btn btn-outline-light btn-lg ms-4">
+                            В корзину
+                            <i class="bi bi-cart"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const decrementButton = document.getElementById('decrementBtn');
+        const incrementButton = document.getElementById('incrementBtn');
+        const counterElement = document.getElementById('cnt');
+        const hiddenInput = document.getElementById('hiddenCnt');
+
+        const updateCounter = (newValue) => {
+            counterElement.textContent = newValue;
+            hiddenInput.value = newValue; 
+        };
+
+        decrementButton.addEventListener('click', (event) => {
+            let currentValue = parseInt(counterElement.textContent, 10);
+            if (currentValue > 1) {
+                updateCounter(currentValue - 1); 
+            }
+        });
+
+        incrementButton.addEventListener('click', (event) => {
+            let currentValue = parseInt(counterElement.textContent, 10);
+            updateCounter(currentValue + 1); 
+        });
+    });
+</script>
+{% endblock %}

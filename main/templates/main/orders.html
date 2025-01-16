@@ -1,0 +1,55 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+Заказы | Panfcate
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2 class="text-start mb-4">Мои заказы</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="col text-start">№</th>
+                        <th class="col text-start">Дата и время заказа</th>
+                        <th class="col text-start">Дата и время мероприятия</th>
+                        <th class="col text-start">Статус</th>
+                        <th class="col text-start">Тип мероприятия</th>
+                        <th class="col text-start">Стоимость</th>
+                        <th class="col text-start">Блюда в заказе</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td scope="row" class="text-start">{{order.id}}</td>
+                        <td class="text-start">{{order.dt_order}}</td>
+                        <td class="text-start">{{order.dt_event}}</td>
+                        <td class="text-start">{{order.status}}</td>
+                        <td class="text-start">{{order.event_type}}</td>
+                        <td class="text-start">{{order.price_org}} ₽</td>
+                        <td class="text-start">
+                            {% for order_id, dishes_in_order in dishes_in_orders.items %}
+                                {% if order_id == order.id %}
+                                    {% for dish_in_order in dishes_in_order %}
+                                    <div>
+                                        <a href="dish?id={{ dish_in_order.dish.id }}" class="me-3">
+                                            {{ dish_in_order.dish.name_dish }}
+                                        </a> 
+                                        {{ dish_in_order.cnt }} шт.
+                                    </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

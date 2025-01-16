@@ -1,0 +1,130 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load extra_filters %}
+
+{% block title %}
+Корзина | Panfcate
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row d-flex justify-content-center align-items-center">
+        {% if order_number %}
+            <div class="row d-flex justify-content-center align-items-center" style="height: 80vh;">
+                <div class="col-9 col-xl-4 col-lg-5 col-md-6 col-sm-8  d-flex flex-column justify-content-center align-items-center my-4">
+                    <h1 class="display-3">Заказ <strong>№{{ order_number }}</strong> успешно оформлен</h2>
+                    <p class="lead">Мы получили ваш заказ и вскоре свяжемся с вами для подтверждения. Ожидайте уведомление на вашу почту или телефон. Спасибо, что выбрали нас!</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-12 text-center">
+                <h2 class="text-start mb-4">Корзина</h2>
+                {% if alert %}
+                <div class="alert alert-dismissible alert-{{ alert.type }} text-center" role="alert">
+                    {{ alert.message|safe }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                </div>
+                {% endif %}
+                {% if cart %}
+                <div class="table-responsive mb-2">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center"></th>
+                            <th class="text-center"></th>
+                            <th class="text-center">Цена</th>
+                            <th class="text-center">Количество</th>
+                            <th class="text-center">Итого</th>
+                            <th class="text-center"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for dish in cart.values %}
+                        <tr>
+                            <td class="text-center align-middle">
+                                {% if dish.photo_dish %}
+                                    <a href="dish?id={{ dish.dish_id }}">
+                                        <img src="{{ dish.photo_dish }}" alt="Фото {{ dish.name_dish }}" 
+                                            class="img-fluid" 
+                                            style="max-width: 176px; max-height: 176px; object-fit: cover; border-radius: 12px;">
+                                    </a>
+                                {% else %}
+                                    <span>Нет изображения</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-start align-middle">{{ dish.name }}</td>
+                            <td class="text-center align-middle cart-actions">{{ dish.price }} ₽</td>
+                            <td class="text-center align-middle cart-actions">
+                                <form action='cart/update_quantity' method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="dish_id" value="{{dish.dish_id}}"/>
+                                    <input type="hidden" name="quantity" value="-1"/>
+                                    <button type="submit" class="btn btn-dark btn-sm"><i class="bi bi-dash"></i></button>
+                                </form>
+                                <span class="mx-2">{{ dish.quantity }}</span>
+                                <form action='cart/update_quantity' method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="dish_id" value="{{dish.dish_id}}"/>
+                                    <input type="hidden" name="quantity" value="1"/>
+                                    <button type="submit" class="btn btn-dark btn-sm"><i class="bi bi-plus"></i></button>
+                                </form>
+                            </td>
+                            <td class="text-center align-middle cart-actions">{{ dish.price|multiply:dish.quantity }} ₽</td>
+                            <td class="text-center align-middle">
+                                <form action="cart/remove_from_cart" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="dish_id" value="{{ dish.dish_id }}">
+                                    <button type="submit" class="btn" style="background: none; border: none; padding: 0;">
+                                        <i class="bi bi-trash" style="color: #dc3545; font-size: 1.15rem;"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <h4 class="text-end">Общая сумма: <strong>{{ total_price }} ₽</strong></h4>
+                <form action="{% url 'cart' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <div class="row text-start mt-4">
+                        <div class="col-12">
+                            <label for="address_event" class="form-label">Адрес мероприятия:</label>
+                            <input type="text" name="address_event" id="address_event" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="row text-start mt-3">
+                        <div class="col-12 col-md-4">
+                            <label for="dt_event" class="form-label">Время и дата:</label>
+                            <input type="datetime-local" name="dt_event" id="dt_event" class="form-control"/>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <label for="event_type" class="form-label">Тип мероприятия:</label>
+                            <select name="event_type" id="event_type" class="form-select" required>
+                                {% for event_type in event_types %}
+                                <option value="{{ event_type.id }}">{{ event_type.event_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row text-start mt-3">
+                        <div class="col-12">
+                            <label for="desr_event" class="form-label">Пожелания или описание мероприятия:</label>
+                            <textarea type="text" name="desr_event" id="desr_event" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-outline-light" name="make_order" id="makeOrderButton">Оформить заказ</button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="row mt-5">
+                    <div class="col text-center">
+                        <h4>В корзине ничего нет</h4>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+</div>
+{% endblock %}

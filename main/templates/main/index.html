@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+Panfcate
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-12 text-start"> 
+            <h1 class="mb-4 display-4 fw-bold">Panfcate</h1>
+            <p class="lead">Ваш идеальный партнёр для незабываемых мероприятий.</p>
+        </div>
+    </div>
+
+    <div class="row featurette mb-5 align-items-center">
+        <div class="col-md-7">
+            <h2 class="featurette-heading fw-normal lh-1 mb-5">Мы заботимся о каждом вашем событии. <span class="text-body-secondary">Деликатесы на любой вкус.</span></h2>
+            <p class="lead">От маленьких встреч до больших корпоративов — мы знаем, как сделать каждое мероприятие особенным. Наши шеф-повара используют только лучшие ингредиенты, чтобы удивить ваших гостей.</p>
+        </div>
+        <div class="col-md-5">
+            <img class="img-fluid rounded" 
+            style="height: 400px; object-fit: cover; width: 100%;"
+            src="{% static 'main/sparkling-glassware-stands-long-table-prepared-wedding-di_8353-688.jpg' %}" alt="Гурманский стол">
+        </div>
+    </div>
+
+    <div class="row featurette mb-5 align-items-center"> 
+        <div class="col-md-5 order-md-2">
+            <h2 class="featurette-heading fw-normal lh-1 mb-5">Высокий сервис — наша гарантия. <span class="text-body-secondary">Внимание к деталям.</span></h2>
+            <p class="lead">Наши профессиональные команды работают, чтобы ваши гости чувствовали себя комфортно и наслаждались атмосферой. Каждый момент важен для нас так же, как для вас.</p>
+        </div>
+        <div class="col-md-7 order-md-1">
+            <img class="img-fluid rounded" src="{% static 'main/waitress-serving-coffee-buffet-restaurant.jpg' %}" 
+            alt="Обслуживание на мероприятии" 
+            style="height: 600px; object-fit: cover; width: 100%;"> 
+        </div>
+    </div>
+
+    <div class="row featurette mb-5 align-items-center">
+        <div class="col-md-7">
+            <h2 class="featurette-heading fw-normal lh-1 mb-5">Доверяйте профессионалам. <span class="text-body-secondary">Ваши идеи — наша реализация.</span></h2>
+            <p class="lead">Мы работаем индивидуально с каждым клиентом, чтобы превзойти ожидания. Расскажите нам о своей мечте, и мы воплотим её в жизнь!</p>
+        </div>
+        <div class="col-md-5">
+            <img class="img-fluid rounded" 
+            style="height: 400px; object-fit: cover; width: 100%;"
+            src="{% static 'main/close-up-people-serving-themselves-fruits-buffet-restaurant_8353-9872.jpg' %}" alt="Праздничный фуршет">
+        </div>
+    </div>
+</div>
+{% endblock %}

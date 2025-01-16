@@ -1,0 +1,98 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+Каталог | Panfcate
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-start">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row mt-3 mb-5 align-items-center">
+                <div class="col-12 col-sm-4 mb-2 mb-sm-0">
+                    <label for="category" class="form-label">Выберите категорию блюд</label>
+                </div>
+
+                <div class="col-12 col-sm-5 mb-2 mb-sm-0">
+                    <select class="form-select" id="category" name="category">
+                        <option value="">Не выбрана</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id == cat_id %} selected="selected" {% endif %}>{{ category.name_cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-3 text-center text-sm-start">
+                    <input type="submit" class="btn btn-outline-light w-100 w-sm-auto" id="filter" name="filter" value="Отфильтровать"/>
+                </div>
+            </div>
+        </form>
+
+        {% if dishes %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 mb-3 text-center">
+            {% for dish in dishes %}
+            <div class="col mb-4">
+                <div class="card rounded-3 shadow-sm d-flex flex-column" style="height: 100%;">
+                    <div class="card-body text-start d-flex flex-column" style="flex-grow: 1;">
+                        <a href="dish?id={{ dish.id }}">
+                            <img src="{{ dish.photo_dish.url }}" 
+                                 style="object-fit: cover; border-radius: 12px; width: 100%; height: auto;" 
+                                 alt="Фото {{ dish.name_dish }}">
+                        </a>
+                        <h5 class="my-3 pricing-card-title" style="font-size: 1.5rem; font-weight: bold;">
+                            {{ dish.price_dish }} ₽
+                        </h5>
+                        <h6 class="my-2" style="font-size: 1.1rem;">
+                            {{ dish.name_dish }}
+                        </h6>
+                        <p class="text-muted" style="font-size: 0.9rem;">
+                            {{ dish.total_weight }} кг
+                        </p>
+                        {% if dish.quantity > 0 %}
+                        <div class="mt-auto d-flex justify-content-between">
+                            <form action="update_quantity" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <input type="hidden" name="quantity" value="-1">
+                                <button type="submit" class="btn btn-secondary btn-lg"><i class="bi bi-dash-lg"></i></button>
+                            </form>
+                            <p class="mx-3 my-0" style="font-size: 1.8rem;">{{ dish.quantity }}</p>
+                            <form action="update_quantity" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-secondary btn-lg"><i class="bi bi-plus-lg"></i></button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="mt-auto">
+                            <form action="add_to_cart" method="post" class="d-flex">
+                                {% csrf_token %}
+                                <input type="hidden" name="dish_id" id="dish_id" value="{{ dish.id }}">
+                                <input type="hidden" value="1" class="form-control me-4" name="cnt" id="cnt">
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button class="w-100 btn btn-secondary btn-lg mt-2">
+                                    <i class="bi bi-plus-lg"></i> 
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="row mt-5">
+            <div class="col text-center">
+                <h4>В выбранной категории нет доступных блюд</h4>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
